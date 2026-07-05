@@ -158,7 +158,10 @@
         }
 
         function closePreview() {
-            document.getElementById('about-section').style.opacity = '1';
+            const aboutSection = document.getElementById('about-section');
+            aboutSection.style.opacity = '1';
+            aboutSection.style.pointerEvents = 'auto'; // Przywracamy klikalność ekranu powitalnego
+            
             document.getElementById('project-iframe').style.opacity = '0';
             document.getElementById('project-iframe').style.pointerEvents = 'none';
             document.getElementById('preview-actions').classList.add('hidden', 'opacity-0');
@@ -167,7 +170,10 @@
         }
 
         function loadProject(el, url, title) {
-            document.getElementById('about-section').style.opacity = '0';
+            const aboutSection = document.getElementById('about-section');
+            aboutSection.style.opacity = '0';
+            aboutSection.style.pointerEvents = 'none'; // Sprawiamy, że ekran powitalny staje się "duchem" i nie blokuje myszki
+            
             const iframe = document.getElementById('project-iframe');
             iframe.src = url;
             iframe.style.opacity = '1';
