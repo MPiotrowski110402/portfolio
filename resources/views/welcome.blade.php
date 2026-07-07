@@ -110,25 +110,25 @@
             <div class="p-4 space-y-3">
                 <div class="text-[10px] uppercase tracking-widest text-slate-500 font-mono mb-1">Dane kontaktowe</div>
 
-                <a href="mailto:mateusz.dawid.piotrowski@gmail.com" class="flex items-center space-x-2.5 text-xs text-slate-300 hover:text-emerald-400 transition-colors">
+                <a href="mailto:twoj@email.com" class="flex items-center space-x-2.5 text-xs text-slate-300 hover:text-emerald-400 transition-colors">
                     <i class="fas fa-envelope w-4 text-emerald-500/80"></i>
-                    <span>mateusz.dawid.piotrowski@gmail.com</span>
+                    <span>twoj@email.com</span>
                 </a>
-                <a href="https://github.com/MPiotrowski110402" target="_blank" class="flex items-center space-x-2.5 text-xs text-slate-300 hover:text-emerald-400 transition-colors">
+                <a href="https://github.com" target="_blank" class="flex items-center space-x-2.5 text-xs text-slate-300 hover:text-emerald-400 transition-colors">
                     <i class="fab fa-github w-4 text-emerald-500/80"></i>
-                    <span>github.com/MPiotrowski110402</span>
+                    <span>github.com/twoj-nick</span>
                 </a>
-                <a href="https://www.linkedin.com/in/mateusz-piotrowski-648634248/" target="_blank" class="flex items-center space-x-2.5 text-xs text-slate-300 hover:text-emerald-400 transition-colors">
+                <a href="https://linkedin.com" target="_blank" class="flex items-center space-x-2.5 text-xs text-slate-300 hover:text-emerald-400 transition-colors">
                     <i class="fab fa-linkedin w-4 text-emerald-500/80"></i>
-                    <span>www.linkedin.com/mateusz-piotrowski</span>
+                    <span>linkedin.com/in/twoj-profil</span>
                 </a>
                 <div class="flex items-center space-x-2.5 text-xs text-slate-300">
                     <i class="fas fa-phone w-4 text-emerald-500/80"></i>
-                    <span>+48 791 478 375</span>
+                    <span>+48 000 000 000</span>
                 </div>
 
                 <div class="pt-2 border-t border-slate-700/60">
-                    <a href="mailto:mateusz.dawid.piotrowski@gmail.com" class="block text-center text-[11px] font-semibold bg-emerald-600 hover:bg-emerald-500 text-slate-900 py-1.5 rounded-lg transition-all">
+                    <a href="mailto:twoj@email.com" class="block text-center text-[11px] font-semibold bg-emerald-600 hover:bg-emerald-500 text-slate-900 py-1.5 rounded-lg transition-all">
                         Napisz e-mail
                     </a>
                 </div>
@@ -148,7 +148,7 @@
 
             <div id="project-list" class="flex flex-col space-y-4">
                 @forelse($projects as $project)
-                    <div onclick="loadProject(this, '{{ $project->project_url }}', '{{ addslashes($project->title) }}', {{ $project->id }}, {{ $project->github_url ? "'" . addslashes($project->github_url) . "'" : 'null' }})"
+                    <div onclick="loadProject(this, '{{ $project->project_url }}', '{{ addslashes($project->title) }}', {{ $project->id }}, {{ $project->github_url ? "'" . addslashes($project->github_url) . "'" : 'null' }}, '{{ $project->slug }}')"
                          data-created="{{ $project->created_at->timestamp }}"
                          data-title="{{ addslashes($project->title) }}"
                          style="animation-delay: {{ $loop->index * 0.06 }}s"
@@ -397,17 +397,17 @@
             updateToggleButton();
         }
 
-        function loadProject(el, url, title, id, repoUrl) {
-            currentProject = { id, url, title, repoUrl: repoUrl || null };
+        function loadProject(el, url, title, id, repoUrl, slug) {
+            currentProject = { id, url, title, repoUrl: repoUrl || null, slug: slug || String(id) };
             viewMode = 'preview';
 
             const aboutSection = document.getElementById('about-section');
             aboutSection.style.opacity = '0';
             aboutSection.style.pointerEvents = 'none';
 
-            // Krótka faza "ładowania" w pasku adresu, zanim pokażemy realny URL
+            // Krótka faza "ładowania" w pasku adresu, zanim pokażemy slug
             const urlEl = document.getElementById('browser-url');
-            urlEl.innerText = 'Łączenie z ' + url + ' ...';
+            urlEl.innerText = 'Łączenie...';
 
             const spinner = document.getElementById('loading-spinner');
             spinner.classList.add('active');
@@ -428,7 +428,7 @@
                 iframe.style.opacity = '1';
                 iframe.style.transform = 'scale(1)';
                 iframe.style.pointerEvents = 'auto';
-                urlEl.innerText = url;
+                urlEl.innerText = '~/projekty/' + currentProject.slug;
                 spinner.classList.remove('active');
             }, 350);
         }
@@ -463,7 +463,7 @@
                 iframe.style.transform = 'scale(1)';
             });
 
-            document.getElementById('browser-url').innerText = currentProject.url;
+            document.getElementById('browser-url').innerText = '~/projekty/' + currentProject.slug;
             document.getElementById('toggle-code-icon').className = 'fas fa-code text-[10px]';
             document.getElementById('toggle-code-label').innerText = 'Kod';
         }
@@ -482,7 +482,7 @@
                 codeView.style.transform = 'scale(1)';
             });
 
-            document.getElementById('browser-url').innerText = currentProject.repoUrl;
+            document.getElementById('browser-url').innerText = '~/projekty/' + currentProject.slug + '/kod';
             document.getElementById('toggle-code-icon').className = 'fas fa-eye text-[10px]';
             document.getElementById('toggle-code-label').innerText = 'Podgląd';
 
