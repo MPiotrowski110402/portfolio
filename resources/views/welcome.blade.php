@@ -30,11 +30,14 @@
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        .iframe-wrapper::before {
-            content: ''; position: absolute; inset: 0;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 38 38" stroke="%2310b981"><g fill="none" fill-rule="evenodd"><g transform="translate(1 1)" stroke-width="2"><circle stroke-opacity=".2" cx="18" cy="18" r="18"/><path d="M36 18c0-9.94-8.06-18-18-18"><animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/></path></g></g></svg>') center no-repeat;
-            z-index: -1;
+        /* Spinner ładowania pokazywany tylko na chwilę przy przełączaniu projektu/widoku */
+        #loading-spinner {
+            position: absolute; inset: 0; z-index: 5;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
         }
+        #loading-spinner.active { opacity: 1; }
 
         /* --- Boot loader --- */
         #boot-loader {
@@ -219,7 +222,19 @@
                 </div>
             </div>
 
-            <div class="flex-1 relative w-full h-full overflow-hidden iframe-wrapper">
+            <div class="flex-1 relative w-full h-full overflow-hidden">
+                <div id="loading-spinner">
+                    <svg width="40" height="40" viewBox="0 0 38 38" stroke="#10b981" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none" fill-rule="evenodd">
+                            <g transform="translate(1 1)" stroke-width="2">
+                                <circle stroke-opacity=".2" cx="18" cy="18" r="18"/>
+                                <path d="M36 18c0-9.94-8.06-18-18-18">
+                                    <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/>
+                                </path>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
                 <div id="about-section" class="absolute inset-0 p-8 flex flex-col justify-center max-w-3xl mx-auto transition-opacity duration-500 overflow-y-auto">
                     <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-3">Cześć, jestem Mateusz.</h2>
                     <p class="text-emerald-400 font-mono typing-effect text-sm">> Fullstack PHP / Laravel Developer_</p>
@@ -373,6 +388,7 @@
             iframe.src = '';
 
             document.getElementById('code-view').classList.add('hidden');
+            document.getElementById('loading-spinner').classList.remove('active');
             document.getElementById('preview-actions').classList.add('hidden', 'opacity-0');
             document.getElementById('preview-actions').classList.remove('flex');
             document.getElementById('browser-url').innerText = "oczekiwanie_na_akcje.sh";
@@ -393,6 +409,9 @@
             const urlEl = document.getElementById('browser-url');
             urlEl.innerText = 'Łączenie z ' + url + ' ...';
 
+            const spinner = document.getElementById('loading-spinner');
+            spinner.classList.add('active');
+
             const iframe = document.getElementById('project-iframe');
             iframe.src = url;
 
@@ -410,6 +429,7 @@
                 iframe.style.transform = 'scale(1)';
                 iframe.style.pointerEvents = 'auto';
                 urlEl.innerText = url;
+                spinner.classList.remove('active');
             }, 350);
         }
 
